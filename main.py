@@ -44,28 +44,30 @@ class NoShowPrediction:
         dataframe['Neighbourhood']=dataframe['Neighbourhood'].apply(lambda x: x.upper().strip())
         dataframe=pd.merge(dataframe, dataframeZone, on='Neighbourhood', how='outer')
         
-       
+        ###### SE FORMOS TRABALLHAR NO GRAO PACIENTE #############
         # embutindo informacoes sobre as consultas ao grao paciente
         dataframe['NumberAppointments']=dataframe.groupby(['PatientId'])['PatientId'].transform('count')
         dataframe['NumberAppointments']=dataframe.groupby(['PatientId'])['PatientId'].transform('count')
         dataframe['LastScheduledDay']=dataframe.groupby(['PatientId'])['ScheduledDay'].transform('max')
         dataframe['LastAppointmentDay']=dataframe.groupby(['PatientId'])['AppointmentDay'].transform('max')
-        
-        ###distancia da ultima consulta
+        dataframe['No-show'] = dataframe['No-show'].apply(lambda x: 1 if x == 'Yes' else 0)
+        dataframe['Number_NoShow']=dataframe.groupby(['PatientId'])['No-show'].transform('sum')
+        #distancia da ultima consulta
         lastschedule = dataframe["LastScheduledDay"]
         lastappointment = dataframe["LastAppointmentDay"]        
         lastdistanceAppointment = list(zip(lastschedule,lastappointment))
         dataframe['LastDistanceAppointment'] = list(map(lambda x: abs((x[0]-x[1]).days), lastdistanceAppointment)) 
-        ###media das distancias das consultas
+        #media das distancias das consultas
         dataframe['MeanDistanceAppointment'] = dataframe.groupby(['PatientId'])['DistanceAppointment'].transform('mean')
-
         # transformando do grao consulta para o grao paciente 
         dataframe=dataframe.drop_duplicates('PatientId')
-
-        #removendo features do gao consultas
-        dataframe.drop(['ScheduledDay','LastScheduledDay', 'AppointmentDay', 'LastAppointmentDay'], axis=1, inplace=True)
+        #removendo features do gao consultas ja descenessarias
+        dataframe.drop(['ScheduledDay','LastScheduledDay', 'AppointmentDay', 'LastAppointmentDay', 'DistanceAppointment'], axis=1, inplace=True)
+        
+        
         #removendo primary keys
         dataframe.drop(["PatientId","AppointmentID"], axis=1, inplace=True)
+        
         return dataframe
 
 
