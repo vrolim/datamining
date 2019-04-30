@@ -47,7 +47,6 @@ class NoShowPrediction:
        
         # embutindo informacoes sobre as consultas ao grao paciente
         dataframe['NumberAppointments']=dataframe.groupby(['PatientId'])['PatientId'].transform('count')
-        dataframe['NumberAppointments']=dataframe.groupby(['PatientId'])['PatientId'].transform('count')
         dataframe['LastScheduledDay']=dataframe.groupby(['PatientId'])['ScheduledDay'].transform('max')
         dataframe['LastAppointmentDay']=dataframe.groupby(['PatientId'])['AppointmentDay'].transform('max')
         
