@@ -47,7 +47,6 @@ class NoShowPrediction:
         ###### SE FORMOS TRABALLHAR NO GRAO PACIENTE #############
         # embutindo informacoes sobre as consultas ao grao paciente
         dataframe['NumberAppointments']=dataframe.groupby(['PatientId'])['PatientId'].transform('count')
-        dataframe['NumberAppointments']=dataframe.groupby(['PatientId'])['PatientId'].transform('count')
         dataframe['LastScheduledDay']=dataframe.groupby(['PatientId'])['ScheduledDay'].transform('max')
         dataframe['LastAppointmentDay']=dataframe.groupby(['PatientId'])['AppointmentDay'].transform('max')
         dataframe['No-show'] = dataframe['No-show'].apply(lambda x: 1 if x == 'Yes' else 0)
