@@ -22,12 +22,13 @@ class NoShowPrediction:
         dataframe["AppointmentDay"] = dataframe["AppointmentDay"].progress_map(lambda x: pd.to_datetime(x))
         dataframe["ScheduledDay"] = dataframe["ScheduledDay"].progress_map(lambda x: pd.to_datetime(x))
         
+       
         #criando pares das datas para calcular a distancia de dias entre marcacao e consulta
         schedule = dataframe["ScheduledDay"]
         appointment = dataframe["AppointmentDay"]        
         distancesAppointment = list(zip(schedule,appointment))
-
-        #criando novas variasveis a partir das datas
+        
+        #criando novas variaveis a partir das datas
         dataframe["Day"] = dataframe["AppointmentDay"].progress_map(lambda x: x.strftime('%A'))
         dataframe["Month"] = dataframe["AppointmentDay"].progress_map(lambda x: x.strftime('%B'))
         dataframe["Week"] = dataframe["AppointmentDay"].progress_map(lambda x: x.strftime('%U'))
@@ -43,7 +44,26 @@ class NoShowPrediction:
         dataframe['Neighbourhood']=dataframe['Neighbourhood'].apply(lambda x: x.upper().strip())
         dataframe=pd.merge(dataframe, dataframeZone, on='Neighbourhood', how='outer')
         
+       
+        # embutindo informacoes sobre as consultas ao grao paciente
+        dataframe['NumberAppointments']=dataframe.groupby(['PatientId'])['PatientId'].transform('count')
+        dataframe['NumberAppointments']=dataframe.groupby(['PatientId'])['PatientId'].transform('count')
+        dataframe['LastScheduledDay']=dataframe.groupby(['PatientId'])['ScheduledDay'].transform('max')
+        dataframe['LastAppointmentDay']=dataframe.groupby(['PatientId'])['AppointmentDay'].transform('max')
         
+        ###distancia da ultima consulta
+        lastschedule = dataframe["LastScheduledDay"]
+        lastappointment = dataframe["LastAppointmentDay"]        
+        lastdistanceAppointment = list(zip(lastschedule,lastappointment))
+        dataframe['LastDistanceAppointment'] = list(map(lambda x: abs((x[0]-x[1]).days), lastdistanceAppointment)) 
+        ###media das distancias das consultas
+        dataframe['MeanDistanceAppointment'] = dataframe.groupby(['PatientId'])['DistanceAppointment'].transform('mean')
+
+        # transformando do grao consulta para o grao paciente 
+        dataframe=dataframe.drop_duplicates('PatientId')
+
+        #removendo features do gao consultas
+        dataframe.drop(['ScheduledDay','LastScheduledDay', 'AppointmentDay', 'LastAppointmentDay'], axis=1, inplace=True)
         #removendo primary keys
         dataframe.drop(["PatientId","AppointmentID"], axis=1, inplace=True)
         return dataframe
