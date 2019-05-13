@@ -44,7 +44,6 @@ class NoShowPrediction:
         dataframe['Neighbourhood']=dataframe['Neighbourhood'].apply(lambda x: x.upper().strip())
         dataframe=pd.merge(dataframe, dataframeZone, on='Neighbourhood', how='outer')
         
-        ###### SE FORMOS TRABALLHAR NO GRAO PACIENTE #############
         # embutindo informacoes sobre as consultas ao grao paciente
         dataframe['NumberAppointments']=dataframe.groupby(['PatientId'])['PatientId'].transform('count')
         dataframe['LastScheduledDay']=dataframe.groupby(['PatientId'])['ScheduledDay'].transform('max')
@@ -59,9 +58,9 @@ class NoShowPrediction:
         #media das distancias das consultas
         dataframe['MeanDistanceAppointment'] = dataframe.groupby(['PatientId'])['DistanceAppointment'].transform('mean')
         # transformando do grao consulta para o grao paciente 
-        dataframe=dataframe.drop_duplicates('PatientId')
-        #removendo features do gao consultas ja descenessarias
-        dataframe.drop(['ScheduledDay','LastScheduledDay', 'AppointmentDay', 'LastAppointmentDay', 'DistanceAppointment'], axis=1, inplace=True)
+        #dataframe=dataframe.drop_duplicates('PatientId')
+        #removendo features do gao consultas ja descnessarias
+        #dataframe.drop(['ScheduledDay','LastScheduledDay', 'AppointmentDay', 'LastAppointmentDay', 'DistanceAppointment'], axis=1, inplace=True)
         
         
         #removendo primary keys
