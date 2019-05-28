@@ -1,5 +1,3 @@
-#ATENÇÃO! o script funciona no out.csv, processado pelo main, da pasta conjunto de dados de Regressão Logísiitca
-
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -23,6 +21,20 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.metrics import classification_report
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import roc_curve
+import seaborn as sns
+
+
+def correlation(dataset, threshold):
+    col_corr = set() 
+    corr_matrix = dataset.corr()
+    for i in range(len(corr_matrix.columns)):
+        for j in range(i):
+            if (corr_matrix.iloc[i, j] >= threshold) and (corr_matrix.columns[j] not in col_corr):
+                colname = corr_matrix.columns[i] 
+                col_corr.add(colname)
+                if colname in dataset.columns:
+                    dataset=dataset.drop(colname, axis=1)
+                    print (colname)
 
 def dummer (colunas, dataframe):
     for item_cat in colunas:
@@ -59,6 +71,15 @@ df['No-show'] = label_encoder_noshow.fit_transform((df['No-show']).astype(str))
 mask = (df['Handcap'] != 0)
 column_name = 'Handcap'
 df.loc[mask, column_name] = 1
+
+
+#Testa correlação entre as variáveis (Para salvar imagem descomente as linhas)
+corr = df.corr()
+#plt.figure(figsize=(16, 12))
+svm=sns.heatmap(corr)
+#fig=svm.get_figure()
+#fig.savefig("Mapa de Calor de Correlação das Variáveis") 
+correlation (df, 0.9)
 
 #Separa o dataframe em variáveis independentes e dependentes
 X = df.loc[:, df.columns != 'No-show']
@@ -142,7 +163,10 @@ plt.xlabel('Taxa de Falso Positivo')
 plt.ylabel('Taxa de Positivos Verdadeiros')
 plt.title('Curva ROC')
 plt.legend(loc="lower right")
+fig = plt.gcf()
 plt.show()
+#fig.savefig('ROC.png', format='png')
+
 
 
 
