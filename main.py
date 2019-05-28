@@ -9,24 +9,58 @@ class NoShowPrediction:
 
     def __init__(self, dataframe):
         '''Entre com o caminho do dataset'''
-        self.dataframe = pd.read_csv(dataframe, sep=',')
 
-        self.dataframe = self.preProcess(self.dataframe)
-        self.dataframe.to_csv("out.csv", sep=',')
-        self.train_set = self.dataframe[(self.dataframe.AppointmentDay < pd.to_datetime('2016-05-29')) & (self.dataframe.AppointmentDay >= pd.to_datetime('2016-04-29'))]
-        self.test_set = self.dataframe[self.dataframe.AppointmentDay >= pd.to_datetime('2016-05-29')]
+        try:
+            self.dataframe = pd.read_csv('./out.csv', sep=',')
+            self.train_set = pd.read_csv('noshow_train.csv', sep=',')
+            self.test_set = pd.read_csv('noshow_test.csv', sep=',')
+        except:
+            self.dataframe = pd.read_csv(dataframe, sep=',')
+            self.dataframe['No-show'] = self.dataframe['No-show'].apply(lambda x: 1 if x == 'Yes' else 0)
+            data = self.dataframe.apply(self.behavior_patient, axis=1)
+
+            self.dataframe = self.preProcess(data)
+        
+            self.train_set = self.dataframe[(self.dataframe.AppointmentDay < pd.to_datetime('2016-05-29')) & (self.dataframe.AppointmentDay >= pd.to_datetime('2016-04-29'))]
+            self.test_set = self.dataframe[self.dataframe.AppointmentDay >= pd.to_datetime('2016-05-29')]
+
+            self.train_set.to_csv('noshow_train.csv', sep=',')
+            self.test_set.to_csv('noshow_test.csv', sep=',')
 
         self.model = None
 
-        self.train_set.to_csv('noshow_train.csv')
-        self.test_set.to_csv('noshow_test.csv')
+        self.train_set.drop(['AppointmentDay','last_No-show'], axis=1, inplace=True)
+        self.test_set.drop(['AppointmentDay','last_No-show'], axis=1, inplace=True)
+        days = {'Monday':1,'Tuesday':2,'Wednesday':3,'Thursday':4,'Friday':5,'Saturday':6,'Sunday':7}
+        adm_zone = ['I – Centro','II - Santo Antônio','III - Bento Ferreira/Jucutuquara','IV – Maruípe','V – Praia do Canto','VI – Continente','VII – São Pedro']
+        self.train_set['Day'] = self.train_set['Day'].apply(lambda x: days[x])
+        self.test_set['Day'] = self.test_set['Day'].apply(lambda x: days[x])
 
-        self.train_set.drop(['AppointmentDay'], axis=1, inplace=True)
-        self.test_set.drop(['AppointmentDay'], axis=1, inplace=True)
-        
+
+        df2 = self.train_set[self.train_set["No-show"]==1]
+        df3 = self.train_set[self.train_set["No-show"]!=1]
+        print(len(df2),len(df3))
+        df3 = df3.sample(frac=1)[:len(df2)]
+        df1 = df3.append(df2, ignore_index=True)
+        self.train_set = df1.sample(frac=1)
+
+        df2 = self.test_set[self.test_set["No-show"]==1]
+        df3 = self.test_set[self.test_set["No-show"]!=1]
+        print(len(df2),len(df3))
+        df3 = df3.sample(frac=1)[:len(df2)]
+        df1 = df3.append(df2, ignore_index=True)
+        self.test_set = df1.sample(frac=1)
+
         self.distColumns()
         
         self.createModel()
+
+    def behavior_patient(self, row):
+        dataframe = self.dataframe
+        consultas_passado = dataframe.loc[(dataframe.PatientId == row["PatientId"]) & (dataframe.AppointmentDay < row["AppointmentDay"]), 'No-show']
+        row["n_appoint_passed"] = len(consultas_passado)
+        row["n_No-show_passed"] = consultas_passado.sum()
+        return row
 
     #pre processamento de algumas colunas, convertendo valores, removendo colunas, etc...
     def preProcess(self, dataframe):
@@ -60,27 +94,22 @@ class NoShowPrediction:
         # embutindo informacoes sobre as consultas ao grao paciente - considerando o tempo
         ##situacao da ultima consulta em relacao ao NO-show. Se for a primeira consulta, preeenhe o campo como primeira,
         dataframe = dataframe.sort_values(by = ['AppointmentDay', 'ScheduledDay'], axis = 0)
-        dataframe['No-show'] = dataframe['No-show'].apply(lambda x: 1 if x == 'Yes' else 0)
+        # dataframe['No-show'] = dataframe['No-show'].apply(lambda x: 1 if x == 'Yes' else 0)
         dataframe['last_No-show'] = dataframe.groupby('PatientId')['No-show'].apply(lambda x : x.shift(1))
         dataframe['last_No-show'].fillna('First_Appointment', inplace=True)
 
        # Consultas, no-shows passados e situacao da ultima consulta .So incrementa a quantidade de consults do dia no proximo DIA de consulta
-            #def behavior_patient(row):
-            #consultas_passado = dataframe.loc[(dataframe.PatientId == row["PatientId"]) & 
-                                         #(dataframe.AppointmentDay < row["AppointmentDay"]), 'No-show']
-                #row["n_appoint_passed"] = len(consultas_passado)
-                #row["n_No-show_passed"] = consultas_passado.sum()
-            #return row
+
         
-        #dataframe = dataframe.apply(behavior_patient, axis=1)
+        # dataframe = dataframe.apply(behavior_patient, axis=1)
         
         # #distancia da ultima consulta
-        lastschedule = dataframe["LastScheduledDay"]
-        lastappointment = dataframe["LastAppointmentDay"]        
-        lastdistanceAppointment = list(zip(lastschedule,lastappointment))
-        dataframe['LastDistanceAppointment'] = list(map(lambda x: abs((x[0]-x[1]).days), lastdistanceAppointment)) 
+        # lastschedule = dataframe["LastScheduledDay"]
+        # lastappointment = dataframe["LastAppointmentDay"]        
+        # lastdistanceAppointment = list(zip(lastschedule,lastappointment))
+        # dataframe['LastDistanceAppointment'] = list(map(lambda x: abs((x[0]-x[1]).days), lastdistanceAppointment)) 
         # #media das distancias das consultas
-        dataframe['MeanDistanceAppointment'] = dataframe.groupby(['PatientId'])['DistanceAppointment'].transform('mean')
+        # dataframe['MeanDistanceAppointment'] = dataframe.groupby(['PatientId'])['DistanceAppointment'].transform('mean')
         # transformando do grao consulta para o grao paciente 
         #dataframe=dataframe.drop_duplicates('PatientId')
         #removendo features do gao consultas ja descnessarias
@@ -88,7 +117,7 @@ class NoShowPrediction:
         
         
         #removendo primary keys
-        dataframe.drop(["PatientId","AppointmentID","ScheduledDay","LastAppointmentDay","LastScheduledDay","Neighbourhood"], axis=1, inplace=True)
+        dataframe.drop(["PatientId","AppointmentID","ScheduledDay","Neighbourhood"], axis=1, inplace=True)
         
         return dataframe
 
@@ -125,6 +154,7 @@ class NoShowPrediction:
 
         dummy_train_df = pd.get_dummies(train_df)
         dummy_test_df = pd.get_dummies(test_df)
+        print(dummy_test_df.head())
 
         model = LogisticRegression()
 
