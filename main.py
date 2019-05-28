@@ -57,12 +57,23 @@ class NoShowPrediction:
         dataframe['Neighbourhood']=dataframe['Neighbourhood'].apply(lambda x: x.upper().strip())
         dataframe=pd.merge(dataframe, dataframeZone, on='Neighbourhood', how='outer')
         
-        # embutindo informacoes sobre as consultas ao grao paciente
-        dataframe['NumberAppointments']=dataframe.groupby(['PatientId'])['PatientId'].transform('count')
-        dataframe['LastScheduledDay']=dataframe.groupby(['PatientId'])['ScheduledDay'].transform('max')
-        dataframe['LastAppointmentDay']=dataframe.groupby(['PatientId'])['AppointmentDay'].transform('max')
+        # embutindo informacoes sobre as consultas ao grao paciente - considerando o tempo
+        ##situacao da ultima consulta em relacao ao NO-show. Se for a primeira consulta, preeenhe o campo como primeira,
+        dataframe = dataframe.sort_values(by = ['AppointmentDay', 'ScheduledDay'], axis = 0)
         dataframe['No-show'] = dataframe['No-show'].apply(lambda x: 1 if x == 'Yes' else 0)
-        # dataframe['Number_NoShow']=dataframe.groupby(['PatientId'])['No-show'].transform('sum')
+        dataframe['last_No-show'] = dataframe.groupby('PatientId')['No-show'].apply(lambda x : x.shift(1))
+        dataframe['last_No-show'].fillna('First_Appointment', inplace=True)
+
+       # Consultas, no-shows passados e situacao da ultima consulta .So incrementa a quantidade de consults do dia no proximo DIA de consulta
+            #def behavior_patient(row):
+            #consultas_passado = dataframe.loc[(dataframe.PatientId == row["PatientId"]) & 
+                                         #(dataframe.AppointmentDay < row["AppointmentDay"]), 'No-show']
+                #row["n_appoint_passed"] = len(consultas_passado)
+                #row["n_No-show_passed"] = consultas_passado.sum()
+            #return row
+        
+        #dataframe = dataframe.apply(behavior_patient, axis=1)
+        
         # #distancia da ultima consulta
         lastschedule = dataframe["LastScheduledDay"]
         lastappointment = dataframe["LastAppointmentDay"]        
