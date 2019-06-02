@@ -4,7 +4,14 @@ from tqdm import tqdm
 from sklearn.linear_model import LogisticRegression
 from sklearn import metrics 
 import pickle
-
+import math
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
+from catboost import CatBoostClassifier
+from sklearn.neural_network import MLPClassifier
 class NoShowPrediction:
 
     def __init__(self, dataframe):
@@ -29,27 +36,27 @@ class NoShowPrediction:
 
         self.model = None
 
-        self.train_set.drop(['AppointmentDay','last_No-show'], axis=1, inplace=True)
-        self.test_set.drop(['AppointmentDay','last_No-show'], axis=1, inplace=True)
-        days = {'Monday':1,'Tuesday':2,'Wednesday':3,'Thursday':4,'Friday':5,'Saturday':6,'Sunday':7}
-        adm_zone = ['I – Centro','II - Santo Antônio','III - Bento Ferreira/Jucutuquara','IV – Maruípe','V – Praia do Canto','VI – Continente','VII – São Pedro']
-        self.train_set['Day'] = self.train_set['Day'].apply(lambda x: days[x])
-        self.test_set['Day'] = self.test_set['Day'].apply(lambda x: days[x])
+        self.train_set["Adm_Zone"].fillna("Outros")
+        self.test_set["Adm_Zone"].fillna("Outros")
+        self.train_set['Adm_Zone'] = self.train_set['Adm_Zone'].apply(lambda x: "Outros" if x!=x else x)
+        self.test_set['Adm_Zone'] = self.test_set['Adm_Zone'].apply(lambda x: "Outros" if x!=x else x)
+        self.train_set['Handcap'] = self.train_set['Handcap'].apply(lambda x: 0 if x==0 else 1)
+        self.test_set['Handcap'] = self.test_set['Handcap'].apply(lambda x: 0 if x==0 else 1)
 
+        self.train_set.drop(['AppointmentDay','last_No-show','Scholarship'], axis=1, inplace=True)
+        self.test_set.drop(['AppointmentDay','last_No-show','Scholarship'], axis=1, inplace=True)
+        days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
+        adm_zone = ['I – Centro','II - Santo Antônio','III - Bento Ferreira/Jucutuquara','IV – Maruípe','V – Praia do Canto','VI – Continente','VII – São Pedro','Outros']
+        self.train_set['Day'] = self.train_set['Day'].apply(lambda x: days.index(x))
+        self.test_set['Day'] = self.test_set['Day'].apply(lambda x: days.index(x))
+        self.train_set['Adm_Zone'] = self.train_set['Adm_Zone'].apply(lambda x: adm_zone.index(x))
+        self.test_set['Adm_Zone'] = self.test_set['Adm_Zone'].apply(lambda x: adm_zone.index(x))
 
         df2 = self.train_set[self.train_set["No-show"]==1]
         df3 = self.train_set[self.train_set["No-show"]!=1]
-        print(len(df2),len(df3))
         df3 = df3.sample(frac=1)[:len(df2)]
         df1 = df3.append(df2, ignore_index=True)
         self.train_set = df1.sample(frac=1)
-
-        df2 = self.test_set[self.test_set["No-show"]==1]
-        df3 = self.test_set[self.test_set["No-show"]!=1]
-        print(len(df2),len(df3))
-        df3 = df3.sample(frac=1)[:len(df2)]
-        df1 = df3.append(df2, ignore_index=True)
-        self.test_set = df1.sample(frac=1)
 
         self.distColumns()
         
