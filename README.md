@@ -7,20 +7,20 @@ Temos no nosso conjunto:
   
 ### Conjunto 1 - RL_train.csv e RL_test.csv: 
 transformações convencionais para a regressão. 
-________
-Variáveis numéricas ('wait','n_noshow_passed', "n_appoint_passed") nornalizadas. Apenas "Age" foi categorizada. 
+
+- Variáveis numéricas ('wait','n_noshow_passed', "n_appoint_passed") nornalizadas. Apenas "Age" foi categorizada. 
 Demais variáveis binárias/dummies.
 
 ### Conjunto 2 - DT_RI_train1.csv e DT_RI_test1.csv:
 Sem nenhuma transformação, para Árvore e Regras. 
-________
-Variáveis numéricas ('wait','n_noshow_passed', "n_appoint_passed", "Age") sem normalização e categóricas('Adm_Zone','week_day) sem dummies. 
+
+- Variáveis numéricas ('wait','n_noshow_passed', "n_appoint_passed", "Age") sem normalização e categóricas('Adm_Zone','week_day) sem dummies. 
 Demais variáveis binárias.
 
 ### Conjunto 3 - DT_RI_train2.csv e DT_RI_test2.csv:
-Com categorização por frequência de algumas variáveis numéricas. Outra alternativa para Árvores e Regra:
-_________
-categorizadas('age_binned','n_noshow_passed_bin', 'n_appoint_passed_bin')
+Com categorização por frequência de algumas variáveis numéricas. Outra alternativa para Árvores e Regra.
+
+- categorizadas('age_binned','n_noshow_passed_bin', 'n_appoint_passed_bin')
 Apenas Wait, continua numérica. Demais binarias e categoricas.
 
 
