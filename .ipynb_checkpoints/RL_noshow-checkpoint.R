@@ -9,8 +9,8 @@ library(plyr)
 options(tibble.print_max = Inf)
 
 #Ler Base de Dados
-test <- read.csv(file = "~/phd/datamining/projetokdd/datamining/RL_train.csv", sep=",")
-train <- read.csv(file = "~/phd/datamining/projetokdd/datamining/RL_test.csv", sep=",")
+test <- read.csv(file = "~/phd/datamining/projetokdd/datamining/RL_test.csv", sep=",")
+train <- read.csv(file = "~/phd/datamining/projetokdd/datamining/RL_train.csv", sep=",")
 #drop extra column
 test<-select (test,-c(X))
 train<-select (train,-c(X))
