@@ -32,10 +32,10 @@ Apenas Wait, continua numérica. Demais binarias e categoricas.
 
    term                       estimate std.error statistic  p.value
  
- **1 wait                          1.50     0.159       9.45 3.30e-21**
- **2 n_noshow_passed               0.928    0.275       3.38 7.26e- 4**
- **3 stat_last_app_ori             0.602    0.0574     10.5  1.04e-25**
- **4 age_binned_5                  0.400    0.119       3.37 7.44e- 4**
+ **1. wait                          1.50     0.159       9.45 3.30e-21**
+ **2. n_noshow_passed               0.928    0.275       3.38 7.26e- 4**
+ **3. stat_last_app_ori             0.602    0.0574     10.5  1.04e-25**
+ **4. age_binned_5                  0.400    0.119       3.37 7.44e- 4**
  5 Alcoholism                    0.355    0.0901      3.94 8.22e- 5
  6 age_binned_15                 0.350    0.106       3.31 9.43e- 4
  7 age_binned_15ormore           0.244    0.0987      2.47 1.35e- 2
