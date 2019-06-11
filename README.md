@@ -35,15 +35,15 @@ Apenas Wait, continua numérica. Demais binarias e categoricas.
 
   
  
-1. wait                         1.50     
-2. n_noshow_passed              0.928    
-3. stat_last_app_ori            0.602    
-4. age_binned_5                 0.400    
+1. wait                         1.6     
+2. stat_last_app_ori            1.1    
+3. Alcoholism.                  0.3    
+4. stat_last_app_First          0.3    
 _______
-1. **n_appoint_passed             -1.15**    
-2. **Hipertension                 -0.354** 
-3. **Adm_Zone_VI.....Continente   -0.334**    
-4. **week_day_2                   -0.138**    
+1. **n_noshow_passed              -0.8**    
+2. **Hipertension                 -0.3** 
+3. **week_day_Thursda.            -0.3**    
+4. **Adm_Zone_VI.....Continente   -0.1**    
 
 
 
