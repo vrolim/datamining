@@ -27,17 +27,17 @@ Apenas Wait, continua numérica. Demais binarias e categoricas.
 ## Resultados Regressao
 **AUC: 0,59**
  
- **Variaveis importantes com significancia 5%:
+ **Variaveis importantes com significancia 5%:**
  
 
   
  
-1. **wait                         1.50     
-2. **n_noshow_passed              0.928    
-3. **stat_last_app_ori            0.602    
-4. **age_binned_5                 0.400    
+1. wait                         1.50     
+2. n_noshow_passed              0.928    
+3. stat_last_app_ori            0.602    
+4. age_binned_5                 0.400    
  
-4. **week_day_2                   -0.138    
-3. **Adm_Zone_VI.....Continente   -0.334    
-2. **Hipertension                 -0.354  
-1. **n_appoint_passed             -1.15    
+5. **week_day_2                   -0.138**    
+6. **Adm_Zone_VI.....Continente   -0.334**    
+7. **Hipertension                 -0.354** 
+8. **n_appoint_passed             -1.15**    
