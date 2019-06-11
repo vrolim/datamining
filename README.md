@@ -5,13 +5,13 @@ Temos no nosso conjunto:
   * 2 categoricas :'Adm_Zone','week_day'
   
   
-### Conjunto 1 - RL_train.csv e RL_test.csv:
+### Conjunto 1 - RL_train.csv e RL_test.csv: 
 transformações convencionais para a regressão. 
 Variáveis numéricas ('wait','n_noshow_passed', "n_appoint_passed") nornalizadas. Apenas "Age" foi categorizada. 
-Demais variáveis binárias.
+Demais variáveis binárias/dummies.
 
 ### Conjunto 2 - DT_RI_train1.csv e DT_RI_test1.csv:
-Arvore e Regras.
+Arvore e Regras. variáveis cruas, sem nenhuma transformacão
 Variáveis numéricas ('wait','n_noshow_passed', "n_appoint_passed", "Age") sem normalização e categóricas('Adm_Zone','week_day) sem dummies. 
 Demais variáveis binárias.
 
@@ -24,7 +24,7 @@ Apenas Wait, continua numérica. Demais binarias e categoricas.
 [Detalhes](StoryTelling.ipynb)
 
 
-## Resultados Regressao
+## Resultados Regressao - Conjunto 1
 **AUC: 0,59**
  
  **Variaveis importantes com significancia 5%:**
