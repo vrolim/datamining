@@ -17,8 +17,8 @@ Demais variáveis binárias.
 
 ##Conjunto 3 - DT_RI_train2.csv e DT_RI_test2.csv:
 Outra alternativa para Árvores e Regras, com categorização por frequência de algumas variáveis numéricas:
-('age_binned', "Adm_Zone", "week_day", 'n_noshow_passed_bin', 'n_appoint_passed_bin')
-Apenas Wait, continua numérica. Demais binarias.
+('age_binned','n_noshow_passed_bin', 'n_appoint_passed_bin')
+Apenas Wait, continua numérica. Demais binarias e categoricas.
 
 
 ##Detalhes: https://github.com/vrolim/datamining/blob/master/StoryTelling.ipynb
