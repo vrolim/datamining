@@ -21,7 +21,7 @@ Outra alternativa para Árvores e Regras, com categorização por frequência de
 Apenas Wait, continua numérica. Demais binarias.
 
 
-##Detalhes: 
+##Detalhes: https://github.com/vrolim/datamining/blob/master/StoryTelling.ipynb
 
 
 
