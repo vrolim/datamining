@@ -38,10 +38,10 @@ mean(crianca$wait)
 mean(adolescente$wait)
 
 #Teste de aderencia da variavel Tempo de Espera
-ggplot(db, aes(x=db$Age_Bin,y=wait)) + geom_boxplot() # para visulizar possibilidade de normalidade
+#ggplot(db, aes(x=db$Age_Bin,y=wait)) + geom_boxplot() # para visulizar possibilidade de normalidade
 wait_mean = mean(db$wait)
 wait_sd = sd(db$wait)
-ks.test(db$wait, "pnorm", wait_mean, wait_sd)
+ks.test(crianca$wait, "pnorm", wait_mean, wait_sd)
 
 #Checkpoints:  Não são normais, são independentes, maiores que 30
 #Teste nao-parametrico para varias amostras
@@ -63,6 +63,16 @@ n2<-length(db$Alvo[db$SMS_received==0])
 
 prop.test(x = c(x1, x2), n = c(n1, n2))
 
+#E para consultas com wait menor que 5?
+
+x1<-length(db$Alvo[db$SMS_received==1 & db$wait< 5 & db$Alvo==1])
+x2<-length(db$Alvo[db$SMS_received==0 & db$wait< 5 & db$Alvo==1])
+n1<-length(db$Alvo[db$SMS_received==1 & db$wait< 5])
+n2<-length(db$Alvo[db$SMS_received==0 & db$wait< 5])
+
+prop.test(x = c(x1, x2), n = c(n1, n2))
+
+
 ##################Os genero tem influencia nos no-shows das consults?
 #H0: Mulher e homens possuem mesmo comportamento em relacao ao no-show
 #Ha: Mulher e homens possuem comportamentos diferentes em relacao ao no-show
@@ -71,7 +81,7 @@ prop.test(x = c(x1, x2), n = c(n1, n2))
 
 n1<-length(db$Alvo[db$Gender==1])
 n2<-length(db$Alvo[db$Gender==0])
-p = x/n
+#p = x/n
 
 x1<-length(db$Alvo[db$Gender==1 & db$Alvo==1])
 x2<-length(db$Alvo[db$Gender==0 & db$Alvo==1])
