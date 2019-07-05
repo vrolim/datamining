@@ -1,5 +1,5 @@
-db<-read.csv(file = "~/phd/datamining/projetokdd/datamining/db_IN1119_consulta.csv", sep=",")
-
+#db<-read.csv(file = "~/phd/datamining/projetokdd/datamining/db_IN1119_consulta.csv", sep=",")
+db<-read.csv(file = "C:/Users/Milton/Documents/Mestrado/Minera��o de Dados/Projeto/git/datamining/db_IN1119_consulta.csv", sep=",")
 #pacotes necessarios
 library(Hmisc)
 library(pastecs)
@@ -26,30 +26,31 @@ cor(db$Age,db$wait)
 #Ha: O padrao de agendamento muda com a Idade
 
 #Filtros faixa etária
-crianca<- filter(db, db$Age_Bin=="Crianca")
-adolescente <- filter(db, db$Age_Bin=="Adolescente")
-RecemNascido<- filter(db, db$Age_Bin=="Recem-Nascido")
-AdultoMeiaIdade<-filter(db, db$Age_Bin=="Adulto-Meia-Idade")
-Adultojovem<-filter(db, db$Age_Bin=="Adulto-Jovem")
-idoso<-filter(db, db$Age_Bin=="Idoso")
+recem_nascido <- db$wait[db$Age_Bin=="Recem-Nascido"]
+crianca <- db$wait[db$Age_Bin=="Crianca"]
+adolescente <- db$wait[db$Age_Bin=="Adolescente"]
+adulto_meia_idade <- db$wait[db$Age_Bin=="Adulto-Meia-Idade"]
+adulto_jovem <- db$wait[db$Age_Bin=="Adulto-Jovem"]
+idoso <- db$wait[db$Age_Bin=="Idoso"]
 
-#Medias amostrais para obsevação
-mean(crianca$wait)
-mean(adolescente$wait)
 
-#Teste de aderencia da variavel Tempo de Espera
-#ggplot(db, aes(x=db$Age_Bin,y=wait)) + geom_boxplot() # para visulizar possibilidade de normalidade
-wait_mean = mean(db$wait)
-wait_sd = sd(db$wait)
-ks.test(crianca$wait, "pnorm", wait_mean, wait_sd)
+#Teste de aderencia da variavel Tempo de Espera 
+
+ks.test(recem_nascido, "pnorm", mean(recem_nascido), sd(recem_nascido))
+ks.test(crianca, "pnorm", mean(crianca), sd(crianca))
+ks.test(adolescente, "pnorm", mean(adolescente), sd(adolescente))
+ks.test(adulto_jovem, "pnorm", mean(adulto_jovem), sd(adulto_jovem))
+ks.test(adulto_meia_idade, "pnorm", mean(adulto_meia_idade), sd(adulto_meia_idade))
+ks.test(idoso, "pnorm", mean(idoso), sd(idoso))
+
 
 #Checkpoints:  Não são normais, são independentes, maiores que 30
 #Teste nao-parametrico para varias amostras
-kruskal.test(list(RecemNascido$wait, crianca$wait, adolescente$wait, Adultojovem$wait, AdultoMeiaIdade$wait, idoso$wait))
+kruskal.test(list(RecemNascido, crianca, adolescente, Adultojovem, AdultoMeiaIdade, idoso))
 
 #E adultos, tem o mesmo padrao?
 #Teste nao-parametrico para duas amostras independetes
-wilcox.test(AdultoMeiaIdade$wait, Adultojovem$wait, Paired=False)
+wilcox.test(AdultoMeiaIdade, Adultojovem, Paired=False)
 
 ##################SMS causa efeito ou não no no-show das consultas?
 #H0: Quem recebe SMS falta igual quem nao recebe
